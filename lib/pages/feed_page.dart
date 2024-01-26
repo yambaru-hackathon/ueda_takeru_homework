@@ -9,7 +9,7 @@ class FeedPage extends StatelessWidget {
   final images = [
     'https://4.bp.blogspot.com/-PxqHqglQYu8/XBC4PaO2UXI/AAAAAAABQ1E/gDQvO91Z0qIj5QuIQXlOc4cUJ3E-2Ho_QCLcBGAs/s400/smartphone_sns_jidori_mucha.png',
     'https://play-lh.googleusercontent.com/VRMWkE5p3CkWhJs6nv-9ZsLAs1QOg5ob1_3qg-rckwYW7yp1fMrYZqnEFpk0IoVP4LM',
-    'https://appliv-domestic.akamaized.net/v1/760x/r/articles/129815/13877626_1604328764_041813000_0_1500_1500.jpeg',
+    // 'https://appliv-domestic.akamaized.net/v1/760x/r/articles/129815/13877626_1604328764_041813000_0_1500_1500.jpeg',
   ];
 
   int activeIndex = 0;
