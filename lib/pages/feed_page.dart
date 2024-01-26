@@ -13,7 +13,6 @@ class FeedPage extends StatelessWidget {
   ];
 
   int activeIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
