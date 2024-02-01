@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:instagram/next_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +32,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _hour = 0;
+  int _minute = 0;
   int _second = 0;
+  int _millisecond = 0;
+
   Timer? _timer;
   bool _isRunning = false;
 
@@ -54,8 +57,9 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '$_second',
-              style: const TextStyle(fontSize: 100),
+              // '$_counter',
+              '${_hour.toString().padLeft(2, '0')}:${_minute.toString().padLeft(2, '0')}:${_second.toString().padLeft(2, '0')}.${_millisecond.toString().padLeft(2, '0')}',
+              style: const TextStyle(fontSize: 48),
             ),
             ElevatedButton(
               onPressed: toggleTimer,
@@ -90,20 +94,23 @@ class _MyHomePageState extends State<MyHomePage> {
       _timer?.cancel();
     } else {
       _timer = Timer.periodic(
-        const Duration(seconds: 1),
+        const Duration(milliseconds: 10),
         (timer) {
           setState(() {
-            _second++;
+            _millisecond++;
+            if (_millisecond >= 100) {
+              _millisecond = 0;
+              _second++;
+              if (_second >= 60) {
+                _second = 0;
+                _minute++;
+                if (_minute >= 60) {
+                  _minute = 0;
+                  _hour++;
+                }
+              }
+            }
           });
-
-          if (_second == 10) {
-            resetTimer();
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const NextPage()),
-            );
-          }
         },
       );
     }
@@ -116,8 +123,21 @@ class _MyHomePageState extends State<MyHomePage> {
   void resetTimer() {
     _timer?.cancel();
     setState(() {
+      _hour = 0;
+      _minute = 0;
       _second = 0;
+      _millisecond = 0;
       _isRunning = false;
     });
   }
 }
+
+
+// if (_counter == 10) {
+//   resetTimer();
+
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(builder: (context) => const NextPage()),
+//   );
+// }
