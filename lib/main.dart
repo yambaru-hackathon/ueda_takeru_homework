@@ -1,7 +1,14 @@
+import 'package:instagram/counter.dart';
+import 'package:instagram/random_color.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -10,60 +17,90 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
+class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
+            Text(
               'You have pushed the button this many times:',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            CounterText(),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: const Buttons(),
+    );
+  }
+}
+
+class CounterText extends ConsumerWidget {
+  const CounterText({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final int counter = ref.watch(counterProvider);
+    final Color color = ref.watch(randomColorProvider);
+    return Text(
+      '$counter',
+      style: TextStyle(
+        color: color,
+        fontSize: 60,
       ),
+    );
+  }
+}
+
+class Buttons extends ConsumerWidget {
+  const Buttons({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        FloatingActionButton(
+          onPressed: () {
+            ref.read(randomColorProvider.notifier).randomColor();
+          },
+          child: const Icon(Icons.color_lens),
+        ),
+        FloatingActionButton(
+          onPressed: () {
+            ref.read(counterProvider.notifier).resetCounter();
+          },
+          child: const Icon(Icons.exposure_zero),
+        ),
+        FloatingActionButton(
+          onPressed: () {
+            ref.read(counterProvider.notifier).decrementCounter();
+          },
+          child: const Icon(Icons.remove),
+        ),
+        FloatingActionButton(
+          onPressed: () {
+            ref.read(counterProvider.notifier).incrementCounter();
+          },
+          child: const Icon(Icons.add),
+        ),
+        FloatingActionButton(
+          onPressed: () {
+            ref.read(counterProvider.notifier).multiplayCounter();
+          },
+          child: const Icon(Icons.close),
+        ),
+      ],
     );
   }
 }
