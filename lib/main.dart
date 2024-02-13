@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'タイマー'),
     );
   }
 }
@@ -30,12 +32,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int _hour = 0;
+  int _minute = 0;
+  int _second = 0;
+  int _millisecond = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  Timer? _timer;
+  bool _isRunning = false;
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -48,22 +55,89 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
+          children: [
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              // '$_counter',
+              '${_hour.toString().padLeft(2, '0')}:${_minute.toString().padLeft(2, '0')}:${_second.toString().padLeft(2, '0')}.${_millisecond.toString().padLeft(2, '0')}',
+              style: const TextStyle(fontSize: 48),
+            ),
+            ElevatedButton(
+              onPressed: toggleTimer,
+              child: Text(
+                _isRunning ? 'ストップ' : 'スタート',
+                style: TextStyle(
+                  color: _isRunning ? Colors.red : Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                resetTimer();
+              },
+              child: const Text(
+                'リセット',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
     );
   }
+
+  toggleTimer() {
+    if (_isRunning) {
+      _timer?.cancel();
+    } else {
+      _timer = Timer.periodic(
+        const Duration(milliseconds: 10),
+        (timer) {
+          setState(() {
+            _millisecond++;
+            if (_millisecond >= 100) {
+              _millisecond = 0;
+              _second++;
+              if (_second >= 60) {
+                _second = 0;
+                _minute++;
+                if (_minute >= 60) {
+                  _minute = 0;
+                  _hour++;
+                }
+              }
+            }
+          });
+        },
+      );
+    }
+
+    setState(() {
+      _isRunning = !_isRunning;
+    });
+  }
+
+  void resetTimer() {
+    _timer?.cancel();
+    setState(() {
+      _hour = 0;
+      _minute = 0;
+      _second = 0;
+      _millisecond = 0;
+      _isRunning = false;
+    });
+  }
 }
+
+
+// if (_counter == 10) {
+//   resetTimer();
+
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(builder: (context) => const NextPage()),
+//   );
+// }
