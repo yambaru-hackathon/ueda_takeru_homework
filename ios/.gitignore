@@ -33,4 +33,5 @@ Runner/GeneratedPluginRegistrant.*
 !default.pbxuser
 !default.perspectivev3
 
-ios\Runner\AppDelegate.swift
+apikey.dart
+apikey.h

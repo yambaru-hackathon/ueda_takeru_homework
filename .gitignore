@@ -43,5 +43,3 @@ app.*.map.json
 /android/app/release
 
 lib/const.dart
-ios\Runner\AppDelegate.swift
-android\app\src\main\AndroidManifest.xml
