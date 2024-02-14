@@ -7,7 +7,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,30 +16,66 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: ChangeNotifierProvider(
+      home: ChangeNotifierProvider<CountModel>(
         create: (_) => CountModel(),
-        child: MyHomePage(),
+        child: const MyHomePage(),
       ),
     );
   }
 }
 
 class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final appBarColor = context.select((CountModel model) => model.appBarColor);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: appBarColor,
       ),
-      body: const CountBody(),
-      floatingActionButton: Builder(builder: (context) {
-        final model = context.read<CountModel>();
-        return FloatingActionButton(
-          onPressed: model.incrementCounter,
-          tooltip: 'Increment',
-          child: const Icon(Icons.add),
-        );
-      }),
+      body: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'First Counter',
+                ),
+                const CountBody(),
+                Consumer<CountModel>(builder: (context, model, child) {
+                  return FloatingActionButton(
+                    onPressed: model.incrementCounter,
+                    tooltip: 'Increment',
+                    child: const Icon(Icons.add),
+                  );
+                }),
+              ],
+            ),
+            const SizedBox(
+              width: 30,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Second Counter',
+                ),
+                const SecondCountBody(),
+                Consumer<CountModel>(builder: (context, model, child) {
+                  return FloatingActionButton(
+                    onPressed: model.incrementSecondCounter,
+                    tooltip: 'Increment Second Counter',
+                    child: const Icon(Icons.add),
+                  );
+                }),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -49,20 +85,24 @@ class CountBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final model = Provider.of<CountModel>(context);
-    final model = context.watch<CountModel>();
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text(
-            'You have pushed the button this many times:',
-          ),
-          Text(
-            '${model.counter}',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-        ],
+    return Consumer<CountModel>(
+      builder: (context, model, child) => Text(
+        '${model.counter}',
+        style: Theme.of(context).textTheme.headlineMedium,
+      ),
+    );
+  }
+}
+
+class SecondCountBody extends StatelessWidget {
+  const SecondCountBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<CountModel>(
+      builder: (context, model, child) => Text(
+        '${model.secondCounter}',
+        style: Theme.of(context).textTheme.headlineMedium,
       ),
     );
   }
