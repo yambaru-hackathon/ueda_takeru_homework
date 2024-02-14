@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_place/google_place.dart';
-import 'package:instagram/const.dart';
 import 'package:instagram/toilet.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'env/env.dart';
 
 class SearchToiletPage extends StatefulWidget {
   const SearchToiletPage({super.key});
@@ -16,7 +16,7 @@ class SearchToiletPage extends StatefulWidget {
 
 class _SearchToiletPageState extends State<SearchToiletPage> {
   late GooglePlace googlePlace;
-  final apikey = Const.apikey;
+  final apikey = Env.key;
 
   Toilet? toilet;
   Uri? mapURL;
