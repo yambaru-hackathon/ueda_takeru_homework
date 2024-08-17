@@ -6,8 +6,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:instagram/add_page.dart';
-import 'package:instagram/user.dart';
+import 'package:instagram/user.dart' as custom_user;
 import 'firebase_options.dart';
 
 void main() async {
@@ -44,22 +45,41 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<User> users = [];
+  List<custom_user.User> users = [];
 
   @override
   void initState() {
     super.initState();
     _fetchFirebaseData();
+    _setupTokenRefresh();
+  }
+
+  void _setupTokenRefresh() {
+    FirebaseAuth.instance.idTokenChanges().listen((User? user) {
+      if (user != null) {
+        user.getIdToken(true).then((String? token) {
+          // トークンを更新して何か処理をする場合、ここに記載
+          print('Token refreshed: $token');
+        }).catchError((error) {
+          // トークン取得に失敗した場合の処理
+          print('Failed to refresh token: $error');
+        });
+      }
+    });
   }
 
   void _fetchFirebaseData() async {
-    final db = FirebaseFirestore.instance;
-    final event = await db.collection("users").get();
-    final docs = event.docs;
-    final users = docs.map((doc) => User.fromFirestore(doc)).toList();
-    setState(() {
-      this.users = users;
-    });
+    try {
+      final db = FirebaseFirestore.instance;
+      final event = await db.collection("users").get();
+      final docs = event.docs;
+      final users = docs.map((doc) => custom_user.User.fromFirestore(doc)).toList();
+      setState(() {
+        this.users = users;
+      });
+    } catch (e) {
+      print("Failed to fetch data: $e");
+    }
   }
 
   @override
